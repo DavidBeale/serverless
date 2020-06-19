@@ -98,6 +98,41 @@ functions:
           route: foo # will trigger if $request.body.action === "foo"
 ```
 
+## Using message validation
+
+You can enable [message body validation](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-selection-expressions.html#apigateway-websocket-api-model-selection-expressions) for your route by specifying the `request` key in the websocket event definition.
+
+**Note:** AWS only supports message validation for the `application/json` content-type.
+
+```yml
+functions:
+  messageHandler:
+    handler: handler.messageHandler
+    events:
+      - websocket:
+          route: message
+          request:
+            schema:
+              application:json: ${file(message-schema.json)}
+```
+
+message.schema.json
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "My Message",
+  "required": ["action"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "title": "Action Type"
+    }
+  }
+}
+```
+
 ## Using Authorizers
 
 You can enable an authorizer for your connect route by specifying the `authorizer` key in the websocket event definition.
